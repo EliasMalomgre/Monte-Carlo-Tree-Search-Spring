@@ -30,8 +30,8 @@ public class MonteCarloService {
      * @param game the game state for which you want to find the best move
      * @return the game state after you performed the best possible move
      */
-    public Game findNextMove(Game game) {
-        return findNextState(game, aiService.getCurrentPlayer(game)).getGame();
+    public SimulationResult findNextMove(Game game) {
+        return findNextState(game, aiService.getCurrentPlayer(game));
     }
 
     public SimulationResult findNextState(Game game, int playerId) {
@@ -39,7 +39,6 @@ public class MonteCarloService {
         int simulations = 0;
         Node rootNode = tree.getRoot();
         rootNode.getState().setGame(game);
-        //TODO NOT CURRENT PLAYER!!!! When other AI's take over, they will run SimulatePlayout, and award games won by currentPlayer instead of themselves
         rootNode.getState().setPlayerNo(playerId);
 
         //Ask for the optimal simulation time
@@ -74,7 +73,8 @@ public class MonteCarloService {
 
             backPropagation(nodeToExplore, winningPlayerId);
 
-        } while (/*System.currentTimeMillis() < end*/ simulations < 10000);
+        } while ((System.currentTimeMillis() < end && !aiConfig.isUseNumberOfSimulations()) ||
+                (simulations < aiConfig.getNumberOfSimulations() && aiConfig.isUseNumberOfSimulations()));
 
         Node winnerNode = rootNode.getChildWithMaxScore();
         log.info("Game[{}]: AI[{}] simulated {} games, ran {}", game.getId(), winnerNode.getState().getPlayerNo(), simulations, winnerNode.getState().getAction());

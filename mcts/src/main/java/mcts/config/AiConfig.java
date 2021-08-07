@@ -16,6 +16,8 @@ public class AiConfig {
     private boolean useOtherMetrics;
 
     //settings to alter monte carlo algorithm
+    private boolean useNumberOfSimulations;
+    private int numberOfSimulations;
     private long simulationTime;
     private double learningRate;
     private int ongoingGame;
